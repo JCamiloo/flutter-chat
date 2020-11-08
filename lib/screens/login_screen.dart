@@ -18,10 +18,14 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Logo(),
+                Logo(title: 'Messenger'),
                 _Form(),
-                Labels(),
-                Text('Términos y condiciones de uso', style: TextStyle(fontWeight: FontWeight.w200))
+                Labels(
+                  title: 'Create one!',
+                  subtitle: 'Don\'t have an account yet?',
+                  route: 'register'
+                ),
+                Text('Terms & conditions', style: TextStyle(fontWeight: FontWeight.w200))
               ],
             ),
           ),
@@ -74,4 +78,3 @@ class __FormState extends State<_Form> {
     );
   }
 }
-
