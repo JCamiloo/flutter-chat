@@ -9,20 +9,13 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   final _textController = TextEditingController();
   final _focusNode = FocusNode();
   bool _isWriting = false;
 
-  List<ChatMessage> _messages = [
-    ChatMessage(uid: '123', text: 'Hello world'),
-    ChatMessage(uid: '122', text: 'Hello world'),
-    ChatMessage(uid: '123', text: 'Hello world'),
-    ChatMessage(uid: '122', text: 'Hello world'),
-    ChatMessage(uid: '123', text: 'Hello world'),
-    ChatMessage(uid: '122', text: 'Hello world'),
-  ];
+  List<ChatMessage> _messages = [];
 
   @override
   Widget build(BuildContext context) {
@@ -133,15 +126,29 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   _handleSubmit(String text) {
+    if (text.trim().length == 0) return; 
+
     print(text);
     _textController.clear();
     _focusNode.requestFocus();
 
-    final newMessage = ChatMessage(uid: '123', text: text);
+    final newMessage = ChatMessage(
+      uid: '123', 
+      text: text,
+      animationController: AnimationController(vsync: this, duration: Duration(milliseconds: 300))
+    );
+
     _messages.insert(0, newMessage);
+    newMessage.animationController.forward();
 
     setState(() {
       _isWriting = false;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _messages.forEach((message) => message.animationController.dispose());
   }
 }

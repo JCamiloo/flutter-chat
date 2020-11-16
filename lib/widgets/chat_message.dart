@@ -4,15 +4,29 @@ class ChatMessage extends StatelessWidget {
 
   final String text;
   final String uid;
+  final AnimationController animationController;
 
-  const ChatMessage({this.text, this.uid});
+  const ChatMessage({
+    @required this.text, 
+    @required this.uid,
+    @required this.animationController
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: this.uid == '123'
-      ? _message()
-      : _partnerMessage()
+    return FadeTransition(
+      opacity: this.animationController,
+      child: SizeTransition(
+        sizeFactor: CurvedAnimation(
+          parent: animationController,
+          curve: Curves.easeOut
+        ),
+        child: Container(
+          child: this.uid == '123'
+          ? _message()
+          : _partnerMessage()
+        ),
+      ),
     );
   }
 
