@@ -67,7 +67,7 @@ class _UsersScreenState extends State<UsersScreen> {
       subtitle: Text(user.email),
       leading: CircleAvatar(
         child: Text(user.name.substring(0,2)),
-        backgroundColor: Colors.blue[200],
+        backgroundColor: Colors.blue[100],
       ),
       trailing: Container(
         width: 10,
