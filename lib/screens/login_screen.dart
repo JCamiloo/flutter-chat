@@ -1,8 +1,10 @@
+import 'package:chat/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:chat/widgets/logo.dart';
 import 'package:chat/widgets/input.dart';
 import 'package:chat/widgets/labels.dart';
 import 'package:chat/widgets/button.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
 
@@ -71,6 +73,8 @@ class __FormState extends State<_Form> {
             onPressed: () {
               print(emailCtrl.text);
               print(passCtrl.text);
+              final authService = Provider.of<AuthService>(context, listen: false);
+              authService.login(emailCtrl.text, passCtrl.text);
             }
           )
         ]
