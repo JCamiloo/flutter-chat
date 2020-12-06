@@ -10,6 +10,7 @@ import 'package:chat/models/service_response.dart';
 class AuthService with ChangeNotifier {
   User user;
   bool _isAuthenticating = false;
+  bool _isRegistering = false;
   final _storage = FlutterSecureStorage();
 
   static Future<String> getToken() async {
@@ -64,10 +65,50 @@ class AuthService with ChangeNotifier {
     }
   }
 
+  Future<ServiceResponse> register(String name, String email, String password) async {
+    this.isRegistering = true;
+    
+    final data = {
+      'name': name,
+      'email': email,
+      'password': password
+    };
+
+    try {
+      final response = await http.post('${Environment.apiUrl}/login/new', 
+        body: jsonEncode(data),
+        headers: { 'Content-Type': 'application/json' }
+      );
+
+      if (response.statusCode == 200) {
+        final loginResponse = loginResponseFromJson(response.body);
+        this.user = loginResponse.data.user;
+        await this._saveToken(loginResponse.data.token);
+        this.isRegistering = false;
+        return ServiceResponse(success: true, message: '');
+      } else {
+        this.isRegistering = false;
+        final errorResponse = serviceResponseFromJson(response.body);
+        return errorResponse;
+      }
+    } catch (error) {
+      print(error);
+      this.isRegistering = false;
+      return ServiceResponse(success: false, message: 'No se pudo registrar');
+    }
+  }
+
   bool get isAuthenticating => this._isAuthenticating;
 
   set isAuthenticating(bool value) {
     this._isAuthenticating = value;
+    notifyListeners();
+  }
+
+  bool get isRegistering => this._isRegistering;
+
+  set isRegistering(bool value) {
+    this._isRegistering = value;
     notifyListeners();
   }
 }

@@ -1,4 +1,3 @@
-import 'package:chat/helpers/alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:chat/widgets/logo.dart';
@@ -7,6 +6,7 @@ import 'package:chat/widgets/labels.dart';
 import 'package:chat/widgets/button.dart';
 import 'package:chat/widgets/spinner.dart';
 import 'package:chat/services/auth_service.dart';
+import 'package:chat/helpers/alert.dart';
 
 class LoginScreen extends StatelessWidget {
 
@@ -25,15 +25,14 @@ class LoginScreen extends StatelessWidget {
                 Logo(title: 'Messenger'),
                 _Form(),
                 Labels(
-                  title: 'Create one!',
-                  subtitle: 'Don\'t have an account yet?',
+                  title: '¡Crea una!',
+                  subtitle: '¿Aún no tienes una cuenta?',
                   route: 'register'
-                ),
-                Text('Terms & conditions', style: TextStyle(fontWeight: FontWeight.w200))
-              ],
-            ),
-          ),
-        ),
+                )
+              ]
+            )
+          )
+        )
       )
     );
   }
@@ -56,18 +55,18 @@ class __FormState extends State<_Form> {
 
     return Container(
       margin: EdgeInsets.only(top: 40),
-      padding: EdgeInsets.symmetric(horizontal: 50),     
+      padding: EdgeInsets.symmetric(horizontal: 30),     
       child: Column(
         children: [
           Input(
             icon: Icons.mail_outline,
-            placeholder: 'Email',
+            placeholder: 'Correo',
             keyboardType: TextInputType.emailAddress,
             textController: emailCtrl,
           ),
           Input(
             icon: Icons.lock_outline,
-            placeholder: 'Password',
+            placeholder: 'Contraseña',
             keyboardType: TextInputType.emailAddress,
             textController: passCtrl,
             isPassword: true,
@@ -75,10 +74,11 @@ class __FormState extends State<_Form> {
           authService.isAuthenticating ? 
           Spinner() :
           Button(
-            text: 'Login',
+            text: 'Ingresar',
             onPressed: () async {
               FocusScope.of(context).unfocus();
               final response = await authService.login(emailCtrl.text.trim(), passCtrl.text.trim());
+
               if (response.success) {
                 Navigator.pushReplacementNamed(context, 'users');
               } else {

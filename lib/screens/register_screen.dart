@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:chat/widgets/logo.dart';
 import 'package:chat/widgets/input.dart';
 import 'package:chat/widgets/labels.dart';
 import 'package:chat/widgets/button.dart';
+import 'package:chat/widgets/spinner.dart';
+import 'package:chat/helpers/alert.dart';
+import 'package:chat/services/auth_service.dart';
 
 class RegisterScreen extends StatelessWidget {
 
@@ -18,18 +22,17 @@ class RegisterScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Logo(title: 'Sign up'),
+                Logo(title: 'Messenger'),
                 _Form(),
                 Labels(
-                  title: 'Log in!',
-                  subtitle: 'Already have an account?',
+                  title: '¡Ingresa!',
+                  subtitle: '¿Ya tienes una cuenta?',
                   route: 'login'
-                ),
-                Text('Terms & conditions', style: TextStyle(fontWeight: FontWeight.w200))
-              ],
-            ),
-          ),
-        ),
+                )
+              ]
+            )
+          )
+        )
       )
     );
   }
@@ -49,35 +52,49 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
     return Container(
       margin: EdgeInsets.only(top: 40),
-      padding: EdgeInsets.symmetric(horizontal: 50),     
+      padding: EdgeInsets.symmetric(horizontal: 30),     
       child: Column(
         children: [
           Input(
             icon: Icons.perm_identity,
-            placeholder: 'Name',
+            placeholder: 'Nombre',
             keyboardType: TextInputType.text,
             textController: nameCtrl,
           ),
           Input(
             icon: Icons.mail_outline,
-            placeholder: 'Email',
+            placeholder: 'Correo',
             keyboardType: TextInputType.emailAddress,
             textController: emailCtrl,
           ),
           Input(
             icon: Icons.lock_outline,
-            placeholder: 'Password',
+            placeholder: 'Contraseña',
             keyboardType: TextInputType.emailAddress,
             textController: passCtrl,
             isPassword: true,
           ),
+          authService.isRegistering ? 
+          Spinner() :
           Button(
-            text: 'Login',
-            onPressed: () {
-              print(emailCtrl.text);
-              print(passCtrl.text);
+            text: 'Ingresar',
+            onPressed: () async {
+             FocusScope.of(context).unfocus();
+              final response = await authService.register(
+                nameCtrl.text.trim(), 
+                emailCtrl.text.trim(), 
+                passCtrl.text.trim()
+              );
+              
+              if (response.success) {
+                Navigator.pushReplacementNamed(context, 'users');
+              } else {
+                showAlert(context, 'Ups!', response.message);
+              }
             }
           )
         ]
