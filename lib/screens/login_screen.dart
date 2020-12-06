@@ -80,7 +80,7 @@ class __FormState extends State<_Form> {
               FocusScope.of(context).unfocus();
               final response = await authService.login(emailCtrl.text.trim(), passCtrl.text.trim());
               if (response.success) {
-
+                Navigator.pushReplacementNamed(context, 'users');
               } else {
                 showAlert(context, 'Ups!', response.message);
               }
