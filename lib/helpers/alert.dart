@@ -7,6 +7,7 @@ showAlert(BuildContext context, String title, String content) {
     return showDialog(
       context: context,
       builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         title: Text(title),
         content: Text(content),
         actions: <Widget> [
