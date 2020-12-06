@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:chat/models/login_response.dart';
 import 'package:chat/models/user.dart';
 import 'package:chat/global/environment.dart';
+import 'package:chat/models/service_response.dart';
 
 class AuthService with ChangeNotifier {
   User user;
@@ -16,7 +17,7 @@ class AuthService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future login(String email, String password) async {
+  Future<ServiceResponse> login(String email, String password) async {
     this.isAuthenticating = true;
     
     final data = {
@@ -30,15 +31,20 @@ class AuthService with ChangeNotifier {
         headers: { 'Content-Type': 'application/json' }
       );
 
+      this.isAuthenticating = false;
+
       if (response.statusCode == 200) {
         final loginResponse = loginResponseFromJson(response.body);
         this.user = loginResponse.data.user;
+        return ServiceResponse(success: true, message: '');
+      } else {
+        final errorResponse = serviceResponseFromJson(response.body);
+        return errorResponse;
       }
-
-      this.isAuthenticating = false;
     } catch (error) {
       print(error);
       this.isAuthenticating = false;
+      return ServiceResponse(success: false, message: 'No se pudo iniciar sesión');
     }
   }
 }

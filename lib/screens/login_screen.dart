@@ -1,3 +1,4 @@
+import 'package:chat/helpers/alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:chat/widgets/logo.dart';
@@ -75,9 +76,14 @@ class __FormState extends State<_Form> {
           Spinner() :
           Button(
             text: 'Login',
-            onPressed: () {
+            onPressed: () async {
               FocusScope.of(context).unfocus();
-              authService.login(emailCtrl.text.trim(), passCtrl.text.trim());
+              final response = await authService.login(emailCtrl.text.trim(), passCtrl.text.trim());
+              if (response.success) {
+
+              } else {
+                showAlert(context, 'Ups!', response.message);
+              }
             }
           )
         ]
