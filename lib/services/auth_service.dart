@@ -98,6 +98,32 @@ class AuthService with ChangeNotifier {
     }
   }
 
+  Future<ServiceResponse> isLoggedIn() async {
+    try {
+      final token = await this._storage.read(key: 'token');
+      final response = await http.get('${Environment.apiUrl}/login/renew', 
+        headers: {
+          'Content-Type': 'application/json',
+          'x-token': token
+        }
+      );
+
+      if (response.statusCode == 200) {
+        final authResponse = loginResponseFromJson(response.body);
+        this.user = authResponse.data.user;
+        await this._saveToken(authResponse.data.token);
+        return ServiceResponse(success: true, message: '');
+      } else {
+        this.logout();
+        return ServiceResponse(success: false, message: 'Sesión terminada');
+      }
+    } catch (error) {
+      print(error);
+      this.logout();
+      return ServiceResponse(success: false, message: 'Sesión terminada');
+    }
+  }
+
   bool get isAuthenticating => this._isAuthenticating;
 
   set isAuthenticating(bool value) {
