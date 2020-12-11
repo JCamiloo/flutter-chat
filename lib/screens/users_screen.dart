@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:chat/services/auth_service.dart';
-import 'package:chat/models/user.dart';
 import 'package:provider/provider.dart';
+import 'package:chat/services/auth_service.dart';
+import 'package:chat/services/socket_service.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:chat/models/user.dart';
 
 class UsersScreen extends StatefulWidget {
   @override
@@ -24,6 +25,7 @@ class _UsersScreenState extends State<UsersScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthService>(context).user;
+    final socketService = Provider.of<SocketService>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -34,6 +36,7 @@ class _UsersScreenState extends State<UsersScreen> {
         leading: IconButton(
           icon: Icon(Icons.exit_to_app, color: Colors.black87),
           onPressed: () {
+            socketService.disconnect();
             Navigator.pushReplacementNamed(context, 'login');
             AuthService.deleteToken();
           },
