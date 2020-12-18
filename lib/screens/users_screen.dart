@@ -1,3 +1,4 @@
+import 'package:chat/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:chat/services/auth_service.dart';
@@ -12,15 +13,15 @@ class UsersScreen extends StatefulWidget {
 
 class _UsersScreenState extends State<UsersScreen> {
 
+  final userService = UserService();
   RefreshController _refreshController = RefreshController(initialRefresh: false);
+  List<User> users = [];
 
-  final users = [
-    User(uid: '1', name: 'Juan', email: 'test1@test.com', online: true),
-    User(uid: '2', name: 'Camilo', email: 'test2@test.com', online: true),
-    User(uid: '3', name: 'David', email: 'test3@test.com', online: true),
-    User(uid: '4', name: 'Diana', email: 'test4@test.com', online: false),
-    User(uid: '5', name: 'Valentina', email: 'test5@test.com', online: true)
-  ];
+  @override
+  void initState() {
+    super.initState();
+    this._loadUsers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +45,9 @@ class _UsersScreenState extends State<UsersScreen> {
         actions: <Widget>[
           Container(
             margin: EdgeInsets.only(right: 10),
-            child: Icon(Icons.check_circle, color: Colors.blue[400]),
-            // child: Icon(Icons.check_circle, color: Colors.blue[400]),
+            child: socketService.serverStatus == ServerStatus.Online ? 
+              Icon(Icons.check_circle, color: Colors.blue[400]) :
+              Icon(Icons.offline_bolt, color: Colors.red),
           )
         ],
       ),
@@ -91,7 +93,8 @@ class _UsersScreenState extends State<UsersScreen> {
   }
 
   _loadUsers() async {
-    await Future.delayed(Duration(milliseconds: 1000));
+    this.users = await userService.getUsers();
+    setState(() {});
     _refreshController.refreshCompleted();
   }
 }
