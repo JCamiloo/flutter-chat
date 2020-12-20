@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'package:chat/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:chat/services/chat_service.dart';
 import 'package:chat/widgets/chat_message.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -10,22 +13,24 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
-
   final _textController = TextEditingController();
   final _focusNode = FocusNode();
   bool _isWriting = false;
-
   List<ChatMessage> _messages = [];
+
 
   @override
   Widget build(BuildContext context) {
+    final chatService = Provider.of<ChatService>(context);
+    final addressee = chatService.addressee;
+
     return Scaffold(
-      appBar: _chatAppBar(),
+      appBar: _chatAppBar(addressee),
       body: _chatContainer(),
     );
   }
 
-  AppBar _chatAppBar() {
+  AppBar _chatAppBar(User addressee) {
     return AppBar(
       backgroundColor: Colors.white,
       centerTitle: true,
@@ -33,12 +38,12 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       title: Column(
         children: <Widget>[
           CircleAvatar(
-            child: Text('JO', style: TextStyle(fontSize: 12)),
+            child: Text(addressee.name.substring(0,2), style: TextStyle(fontSize: 12)),
             backgroundColor: Colors.blue[100],
             maxRadius: 14,
           ),
           SizedBox(height: 3),
-          Text('Juan Osorio', style: TextStyle(color: Colors.black87, fontSize: 12))
+          Text(addressee.name, style: TextStyle(color: Colors.black87, fontSize: 12))
         ],
       ),
     );
@@ -97,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         });
       },
       decoration: InputDecoration.collapsed(
-        hintText: 'Send message'
+        hintText: 'Enviar'
       ),
       focusNode: _focusNode,
     );

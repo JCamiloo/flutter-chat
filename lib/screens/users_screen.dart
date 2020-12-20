@@ -1,3 +1,4 @@
+import 'package:chat/services/chat_service.dart';
 import 'package:chat/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -89,6 +90,11 @@ class _UsersScreenState extends State<UsersScreen> {
           borderRadius: BorderRadius.circular(100)
         ),
       ),
+      onTap: () {
+        final chatService = Provider.of<ChatService>(context, listen: false);
+        chatService.addressee = user;
+        Navigator.pushNamed(context, 'chat');
+      },
     );
   }
 
