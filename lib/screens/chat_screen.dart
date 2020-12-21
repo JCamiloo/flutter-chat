@@ -31,6 +31,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     this.chatService = Provider.of<ChatService>(context, listen: false);
     this.socketService = Provider.of<SocketService>(context, listen: false);
     this.authService = Provider.of<AuthService>(context, listen: false);
+
+    this.socketService.socket.on('personal-message', _messageReceived);
   }
 
   @override
@@ -41,6 +43,27 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       appBar: _chatAppBar(addressee),
       body: _chatContainer(),
     );
+  }
+
+  @override
+  void dispose() {
+    _messages.forEach((message) => message.animationController.dispose());
+    this.socketService.socket.off('personal-message');
+    super.dispose();
+  }
+
+  void _messageReceived(dynamic payload) {
+    ChatMessage newMessage = ChatMessage(
+      text: payload['message'],
+      uid: payload['from'],
+      animationController: AnimationController(vsync: this, duration: Duration(milliseconds: 300)),
+    );
+
+    setState(() {
+      _messages.insert(0, newMessage);
+    });
+
+    newMessage.animationController.forward();
   }
 
   AppBar _chatAppBar(User addressee) {
@@ -146,7 +169,6 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   _handleSubmit(String text) {
     if (text.trim().length == 0) return; 
 
-    print(text);
     _textController.clear();
     _focusNode.requestFocus();
 
@@ -168,11 +190,5 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       'to': this.chatService.addressee.uid,
       'message': text
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _messages.forEach((message) => message.animationController.dispose());
   }
 }
