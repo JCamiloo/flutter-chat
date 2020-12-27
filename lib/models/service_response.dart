@@ -1,9 +1,5 @@
 import 'dart:convert';
 
-ServiceResponse serviceResponseFromJson(String str) => ServiceResponse.fromJson(json.decode(str));
-
-String serviceResponseToJson(ServiceResponse data) => json.encode(data.toJson());
-
 class ServiceResponse {
   bool success;
   String message;
@@ -23,3 +19,7 @@ class ServiceResponse {
     "message": message,
   };
 }
+
+ServiceResponse serviceResponseFromJson(String str) => ServiceResponse.fromJson(json.decode(str));
+
+String serviceResponseToJson(ServiceResponse data) => json.encode(data.toJson());

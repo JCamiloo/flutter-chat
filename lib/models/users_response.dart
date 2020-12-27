@@ -1,18 +1,14 @@
 import 'dart:convert';
 import 'package:chat/models/user.dart';
 
-UsersResponse usersResponseFromJson(String str) => UsersResponse.fromJson(json.decode(str));
-
-String usersResponseToJson(UsersResponse data) => json.encode(data.toJson());
-
 class UsersResponse {
+  bool success;
+  List<User> data;
+
   UsersResponse({
       this.success,
       this.data,
   });
-
-  bool success;
-  List<User> data;
 
   factory UsersResponse.fromJson(Map<String, dynamic> json) => UsersResponse(
     success: json["success"],
@@ -24,3 +20,7 @@ class UsersResponse {
     "data": List<dynamic>.from(data.map((x) => x.toJson())),
   };
 }
+
+UsersResponse usersResponseFromJson(String str) => UsersResponse.fromJson(json.decode(str));
+
+String usersResponseToJson(UsersResponse data) => json.encode(data.toJson());
