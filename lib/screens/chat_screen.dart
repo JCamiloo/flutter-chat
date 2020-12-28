@@ -6,6 +6,7 @@ import 'package:chat/services/chat_service.dart';
 import 'package:chat/services/socket_service.dart';
 import 'package:chat/services/auth_service.dart';
 import 'package:chat/widgets/chat_message.dart';
+import 'package:chat/models/messages_response.dart';
 import 'package:chat/models/user.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -33,6 +34,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     this.authService = Provider.of<AuthService>(context, listen: false);
 
     this.socketService.socket.on('personal-message', _messageReceived);
+
+    _loadHistory(this.chatService.addressee.uid);
   }
 
   @override
@@ -64,6 +67,23 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     });
 
     newMessage.animationController.forward();
+  }
+
+  void _loadHistory(String userId) async {
+    List<Message> chat = await this.chatService.getChat(userId);
+
+    final history = chat.map((m) => ChatMessage(
+      text: m.message,
+      uid: m.from,
+      animationController: AnimationController(
+        vsync: this, 
+        duration: Duration(milliseconds: 0)
+      )..forward(),
+    ));
+
+    setState(() {
+      _messages.insertAll(0, history);
+    });
   }
 
   AppBar _chatAppBar(User addressee) {
@@ -173,9 +193,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     _focusNode.requestFocus();
 
     final newMessage = ChatMessage(
-      uid: '123', 
+      uid: authService.user.uid, 
       text: text,
-      animationController: AnimationController(vsync: this, duration: Duration(milliseconds: 300))
+      animationController: AnimationController(
+        vsync: this, 
+        duration: Duration(
+          milliseconds: 300
+        )
+      )
     );
 
     _messages.insert(0, newMessage);

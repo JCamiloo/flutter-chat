@@ -41,7 +41,7 @@ class AuthService with ChangeNotifier {
     };
 
     try {
-      final response = await http.post('${Environment.apiUrl}/login', 
+      final response = await http.post('${Environment.apiUrl}/v1/login', 
         body: jsonEncode(data),
         headers: { 'Content-Type': 'application/json' }
       );
@@ -75,7 +75,7 @@ class AuthService with ChangeNotifier {
     };
 
     try {
-      final response = await http.post('${Environment.apiUrl}/login/new', 
+      final response = await http.post('${Environment.apiUrl}/v1/login/new', 
         body: jsonEncode(data),
         headers: { 'Content-Type': 'application/json' }
       );
@@ -101,7 +101,7 @@ class AuthService with ChangeNotifier {
   Future<ServiceResponse> isLoggedIn() async {
     try {
       final token = await this._storage.read(key: 'token');
-      final response = await http.get('${Environment.apiUrl}/login/renew', 
+      final response = await http.get('${Environment.apiUrl}/v1/login/renew', 
         headers: {
           'Content-Type': 'application/json',
           'x-token': token

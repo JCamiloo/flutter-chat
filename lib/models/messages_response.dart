@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class MessageResponse {
   bool success;
-  List<Datum> data;
+  List<Message> data;
   
   MessageResponse({
     this.success,
@@ -11,7 +11,7 @@ class MessageResponse {
 
   factory MessageResponse.fromJson(Map<String, dynamic> json) => MessageResponse(
     success: json["success"],
-    data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+    data: List<Message>.from(json["data"].map((x) => Message.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -24,14 +24,14 @@ MessageResponse messageResponseFromJson(String str) => MessageResponse.fromJson(
 
 String messageResponseToJson(MessageResponse data) => json.encode(data.toJson());
 
-class Datum {
+class Message {
   String from;
   String to;
   String message;
   DateTime createdAt;
   DateTime updatedAt;
 
-  Datum({
+  Message({
     this.from,
     this.to,
     this.message,
@@ -39,7 +39,7 @@ class Datum {
     this.updatedAt,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory Message.fromJson(Map<String, dynamic> json) => Message(
     from: json["from"],
     to: json["to"],
     message: json["message"],
